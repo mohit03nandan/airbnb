@@ -1,16 +1,19 @@
-const { registerService } = require('../services/authService');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
+
+const { registerService, Loginservice } = require('../services/authService');
+
+const SECRET_KEY = process.env.SECRET_KEY;
 
 const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // Check if user exists
     const existingUser = await registerService.findUserByEmail(email);
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    // Register user
     const user = await registerService.register({ name, email, password });
 
     return res.status(201).json({
@@ -19,7 +22,7 @@ const register = async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
-      }
+      },
     });
   } catch (error) {
     console.error('Register Error:', error);
@@ -27,6 +30,30 @@ const register = async (req, res) => {
   }
 };
 
+const Login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
+    const userFind = await Loginservice.userfindByEmail(email);
+    if (!userFind) {
+      return res.status(400).json({ message: 'User not found' });
+    }
 
-module.exports = { register };
+    const passwordmatched = await Loginservice.userpassword(password, userFind.password);
+    if (!passwordmatched) {
+      return res.status(400).json({ message: 'Password not matched' });
+    }
+
+    const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: '1h' });
+
+    return res.status(200).json({
+      message: 'User login successfully',
+      token,
+    });
+  } catch (error) {
+    console.error('Login Error:', error);
+    return res.status(500).json({ message: 'Something went wrong' });
+  }
+};
+
+module.exports = { register, Login };
