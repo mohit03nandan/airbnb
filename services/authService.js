@@ -6,13 +6,14 @@ const registerService = {
     return await prisma.user.findUnique({ where: { email } });
   },
 
-  register: async ({ name, email, password }) => {
+  register: async ({ name, email, password , role}) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
       data: {
         name,
         email,
         password: hashedPassword,
+        role
       },
     });
     return user;

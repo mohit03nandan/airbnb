@@ -7,15 +7,13 @@ const SECRET_KEY = process.env.SECRET_KEY;
 
 const register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-
+    const { name, email, password , role } = req.body;
     const existingUser = await registerService.findUserByEmail(email);
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
     }
-
-    const user = await registerService.register({ name, email, password });
-
+    console.log(role)
+    const user = await registerService.register({ name, email, password , role});
     return res.status(201).json({
       message: 'User registered successfully',
       user: {
