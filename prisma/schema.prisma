@@ -31,6 +31,7 @@ model Place {
   description String
   location    String
   price       Int
+  isdelete    Boolean @default(false)
   adminId     String
   createdAt   DateTime @default(now())
   admin       User     @relation("UserPlaces", fields: [adminId], references: [id])
