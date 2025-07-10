@@ -1,4 +1,4 @@
-const {createItemService,deletemItemservice} = require("../services/ListingService")
+const {createItemService,deletemItemservice,UpdateItemservice} = require("../services/ListingService")
 
 const createItem = async(req,res) =>{
    try {
@@ -34,7 +34,6 @@ const deleteItem = async(req,res) =>{
         });
       }
        const data = await deletemItemservice.delete({id});
-       console.log(data)
        if(data){
           return res.status(200).json({
             message : "Item deleted successfully"
@@ -52,4 +51,30 @@ const deleteItem = async(req,res) =>{
 }
 
 
-module.exports = {createItem,deleteItem}
+const updateItem = async(req,res) =>{
+  try {
+      const {id,name,description,location,price} = req.body;
+      if(!id){
+         return res.status(400).json({
+          message : "Please Provide The Item Id"
+         })
+      }
+      const data = await UpdateItemservice.update({id,name,description,location,price})
+      if(data){
+           return res.status(200).json({
+             message : "Item update successfully"
+           })
+      }else{
+         return res.status(404).json({
+           message : "Item not found"
+         })
+      }
+  } catch (error) {
+    return res.status(500).json({
+         message : "something went wrong"
+    })
+  }
+}
+
+
+module.exports = {createItem,deleteItem,updateItem}

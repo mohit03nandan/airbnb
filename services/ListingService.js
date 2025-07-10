@@ -17,12 +17,9 @@ const createItemService = {
 
 const deletemItemservice = {
   delete: async ({ id }) => {
-    try {
-      console.log("inside data");
-      
+    try {      
       const exists = await prisma.place.findUnique({ where: { id } });
       if (!exists) {
-        console.log("Record not found");
         return null;
       }
 
@@ -32,8 +29,6 @@ const deletemItemservice = {
           isdelete: true
         }
       });
-
-      console.log("deleted data", data);
       return data;
     } catch (error) {
       console.error("Service Error:", error.message);
@@ -43,4 +38,39 @@ const deletemItemservice = {
 };
 
 
-module.exports = {createItemService,deletemItemservice}
+const UpdateItemservice = {
+  update: async ({ id, name, description, location, price }) => {
+    try {
+      const exists = await prisma.place.findFirst({
+        where: {
+          id,
+          isdelete: false
+        }
+      });
+
+      if (!exists) {
+        return null;
+      }
+
+      const data = await prisma.place.update({
+        where: { id },
+        data: {
+          name,
+          description,
+          location,
+          price
+        }
+      });
+
+      return data;
+
+    } catch (error) {
+      console.error("Update Item Service Error:", error.message);
+      return null;
+    }
+  }
+};
+
+
+
+module.exports = {createItemService,deletemItemservice,UpdateItemservice}
