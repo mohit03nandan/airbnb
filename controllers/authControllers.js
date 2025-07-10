@@ -12,7 +12,6 @@ const register = async (req, res) => {
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
     }
-    console.log(role)
     const user = await registerService.register({ name, email, password , role});
     return res.status(201).json({
       message: 'User registered successfully',
@@ -42,7 +41,15 @@ const Login = async (req, res) => {
       return res.status(400).json({ message: 'Password not matched' });
     }
 
-    const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: '1h' });
+   const token = jwt.sign(
+  {
+    id: userFind.id,
+    email: userFind.email,
+    role: userFind.role
+  },
+  process.env.SECRET_KEY,
+  { expiresIn: '1h' }
+);
 
     return res.status(200).json({
       message: 'User login successfully',

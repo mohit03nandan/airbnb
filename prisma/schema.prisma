@@ -19,7 +19,19 @@ model User {
   name      String
   email     String   @unique
   password  String
-  role      String   
+  role      String
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
+  listings  Place[]  @relation("UserPlaces")
+}
+
+model Place {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  location    String
+  price       Int
+  adminId     String
+  createdAt   DateTime @default(now())
+  admin       User     @relation("UserPlaces", fields: [adminId], references: [id])
 }
