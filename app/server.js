@@ -2,6 +2,7 @@ const express = require('express');
 const {testConnection} = require('../config/db')
 const authRoutes = require("../routes/authRoutes");
 const listingRoutes = require("../routes/ListingRoutes")
+require("../jobs/dailyItem")
 const cors = require('cors');
 require('dotenv').config();
 
