@@ -1,10 +1,8 @@
-const {
-  createItemService,
-  deletemItemservice,
-  UpdateItemservice,
-} = require("../services/ListingService");
+const {createItemService,deletemItemservice,UpdateItemservice,getItemsService} = require("../services/ListingService");
 const { sendEmail } = require("../utils/emailUtils");
 const {emailformat} = require("../static/emailformat")
+const {cacheService} = require("../services/cacheService")
+
 
 const createItem = async (req, res) => {
   try {
@@ -103,4 +101,27 @@ const updateItem = async (req, res) => {
   }
 };
 
-module.exports = { createItem, deleteItem, updateItem };
+const getItems = async (req, res) => {
+  try {
+    const data = await cacheService.getCache("items");
+    if (data) {
+      return res.status(200).json({
+        message: "Items fetched successfully",
+        data,
+      });
+    } else {
+      const data = await getItemsService.getItems();
+      await cacheService.setCache("items", data);
+      return res.status(200).json({
+        message: "Items fetched successfully",
+        data,
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      message: "something went wrong !!!",
+    });
+  }
+};
+
+module.exports = { createItem, deleteItem, updateItem,getItems };

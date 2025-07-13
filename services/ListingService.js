@@ -71,6 +71,22 @@ const UpdateItemservice = {
   }
 };
 
+const getItemsService = {
+    getItems: async () => {
+        try {
+            const data = await prisma.place.findMany({
+                where: {
+                    isdelete: false,
+                },
+            });
+            return data;
+        } catch (error) {
+            console.error("Service Error:", error.message);
+            return null;
+        }
+    }
+}
 
 
-module.exports = {createItemService,deletemItemservice,UpdateItemservice}
+
+module.exports = {createItemService,deletemItemservice,UpdateItemservice,getItemsService}
